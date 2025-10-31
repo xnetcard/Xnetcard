@@ -1,0 +1,333 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>College ID Card Generator</title>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Card styling */
+    .id-card {
+      width: 350px;
+      height: 520px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+      background: linear-gradient(180deg,#ffffff 0%, #f8fff8 100%);
+      padding: 18px;
+      box-sizing: border-box;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    .id-card .college-name { color: #047857; }
+    .photo-box { width: 110px; height: 130px; border-radius: 6px; overflow: hidden; border: 2px solid #e5e7eb; background: #f3f4f6; display:flex;align-items:center;justify-content:center }
+    .vertical-session { writing-mode:vertical-rl; transform:rotate(180deg); font-weight:700; }
+    @media print { .no-print { display:none } }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-6">
+  <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-6">
+    <!-- Form -->
+    <div class="bg-white p-6 rounded-lg shadow-sm">
+      <h2 class="text-2xl font-semibold mb-4">ID Card Details</h2><form id="idForm" class="space-y-3">
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <label class="text-sm font-medium">Name</label>
+        <input required name="studentName" id="studentName" class="w-full border rounded px-2 py-2 mt-1" placeholder="Full Name" />
+      </div>
+      <div>
+        <label class="text-sm font-medium">Admission No.</label>
+        <div class="flex">
+          <input name="admissionNo" id="admissionNo" class="w-full border rounded px-2 py-2 mt-1" readonly />
+          <button type="button" id="regenAdm" class="ml-2 px-3 py-2 bg-gray-100 border rounded">Regenerate</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <label class="text-sm font-medium">Date of Birth</label>
+        <input type="date" name="dob" id="dob" class="w-full border rounded px-2 py-2 mt-1" />
+      </div>
+      <div>
+        <label class="text-sm font-medium">Class / Year</label>
+        <input name="classYear" id="classYear" placeholder="e.g. B.Sc. 1st" class="w-full border rounded px-2 py-2 mt-1" />
+      </div>
+    </div>
+
+    <div>
+      <label class="text-sm font-medium">Father's Name</label>
+      <input name="fatherName" id="fatherName" class="w-full border rounded px-2 py-2 mt-1" />
+    </div>
+
+    <div>
+      <label class="text-sm font-medium">Address</label>
+      <input name="address" id="address" class="w-full border rounded px-2 py-2 mt-1" />
+    </div>
+
+    <div>
+      <label class="text-sm font-medium">Mobile Number</label>
+      <input name="mobile" id="mobile" class="w-full border rounded px-2 py-2 mt-1" placeholder="10-digit mobile"/>
+    </div>
+
+    <div>
+      <label class="text-sm font-medium">Upload Photo</label>
+      <input type="file" accept="image/*" id="photoInput" class="w-full mt-1" />
+    </div>
+
+    <hr class="my-3" />
+
+    <details class="bg-gray-50 p-3 rounded">
+      <summary class="font-medium">College Info (auto-filled — click to edit)</summary>
+      <div class="mt-3 space-y-2">
+        <div>
+          <label class="text-sm">College Name</label>
+          <input id="collegeName" class="w-full border rounded px-2 py-2 mt-1" value="Greenfield College of Arts & Science" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-sm">Recognition / Reg. No.</label>
+            <input id="collegeReg" class="w-full border rounded px-2 py-2 mt-1" value="Reg. No: GFA/2012/001" />
+          </div>
+          <div>
+            <label class="text-sm">Contact No.</label>
+            <input id="collegePhone" class="w-full border rounded px-2 py-2 mt-1" value="(012) 345-6789" />
+          </div>
+        </div>
+        <div>
+          <label class="text-sm">College Address</label>
+          <input id="collegeAddr" class="w-full border rounded px-2 py-2 mt-1" value="12 Campus Road, Cityname, State - 123456" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-sm">Principal Name</label>
+            <input id="principalName" class="w-full border rounded px-2 py-2 mt-1" value="Dr. A. K. Sharma" />
+          </div>
+          <div>
+            <label class="text-sm">Session</label>
+            <input id="sessionText" class="w-full border rounded px-2 py-2 mt-1" value="Session 2024-25" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-sm">College Logo (URL)</label>
+            <input id="collegeLogo" class="w-full border rounded px-2 py-2 mt-1" value="" placeholder="optional image URL" />
+          </div>
+          <div>
+            <label class="text-sm">Principal Signature (URL)</label>
+            <input id="principalSign" class="w-full border rounded px-2 py-2 mt-1" value="" placeholder="optional image URL" />
+          </div>
+        </div>
+
+      </div>
+    </details>
+
+    <div class="flex gap-2 mt-4">
+      <button type="button" id="previewBtn" class="px-4 py-2 bg-green-600 text-white rounded">Generate ID Card</button>
+      <button type="button" id="resetBtn" class="px-4 py-2 bg-gray-100 rounded">Reset</button>
+    </div>
+
+  </form>
+
+  <p class="text-xs text-gray-500 mt-4">Tip: Use "Regenerate" to create a new Admission No. The college fields are editable for different campuses.</p>
+</div>
+
+<!-- Preview + Actions -->
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h2 class="text-xl font-semibold">Preview & Export</h2>
+    <div class="space-x-2">
+      <button id="downloadPNG" class="px-3 py-2 bg-white border rounded no-print">Download PNG</button>
+      <button id="downloadPDF" class="px-3 py-2 bg-white border rounded no-print">Download PDF</button>
+    </div>
+  </div>
+
+  <div id="previewWrap" class="p-4 bg-gray-100 rounded flex justify-center">
+    <!-- ID card element to capture -->
+    <div id="idCard" class="id-card relative" style="background:#fff;">
+
+      <!-- Session vertical bar -->
+      <div class="absolute right-0 top-6 mr-[-26px] bg-green-600 text-white rounded-l px-2 py-4 vertical-session" id="previewSession">SESSION</div>
+
+      <div class="flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <div id="logoBox" class="w-14 h-14 rounded overflow-hidden bg-white flex items-center justify-center">
+            <!-- default logo: simple SVG -->
+            <svg id="defaultLogo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="52"><rect width="100" height="100" rx="12" fill="#047857"/><text x="50" y="58" font-size="42" font-family="sans-serif" fill="#fff" text-anchor="middle">G</text></svg>
+          </div>
+          <div>
+            <div class="text-lg font-bold college-name" id="previewCollegeName">Greenfield College of Arts & Science</div>
+            <div class="text-xs text-gray-600" id="previewReg">Reg. No: GFA/2012/001</div>
+          </div>
+        </div>
+        <div class="text-right text-xs">
+          <div id="previewCollegeAddr">12 Campus Road, Cityname</div>
+          <div id="previewPhone">(012) 345-6789</div>
+        </div>
+      </div>
+
+      <div class="mt-4 flex gap-4">
+        <div class="photo-box" id="previewPhoto">Photo</div>
+        <div class="flex-1">
+          <div class="text-sm text-gray-600">Name</div>
+          <div class="font-semibold text-lg" id="previewName">Student Name</div>
+
+          <div class="mt-2 text-sm text-gray-600">Admission No.</div>
+          <div class="font-medium" id="previewAdm">AD-2024-0001</div>
+
+          <div class="grid grid-cols-2 gap-2 mt-3 text-sm">
+            <div>
+              <div class="text-gray-600 text-xs">Class</div>
+              <div id="previewClass">B.Sc. 1st</div>
+            </div>
+            <div>
+              <div class="text-gray-600 text-xs">DOB</div>
+              <div id="previewDob">01-01-2000</div>
+            </div>
+            <div>
+              <div class="text-gray-600 text-xs">F. Name</div>
+              <div id="previewFname">Father's Name</div>
+            </div>
+            <div>
+              <div class="text-gray-600 text-xs">Mob. No.</div>
+              <div id="previewMob">+91-9876543210</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 text-sm text-gray-700">
+        <div id="previewAddr">12 Campus Road, Cityname, State - 123456</div>
+      </div>
+
+      <div class="mt-6 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div id="signBox" style="width:110px;height:40px;display:flex;align-items:center;justify-content:center;">
+            <!-- default signature placeholder -->
+            <svg width="110" height="40" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg"><path d="M4 60 C50 10, 150 100, 196 40" stroke="#000" fill="none" stroke-width="3" stroke-linecap="round"/></svg>
+          </div>
+          <div class="text-xs">
+            <div id="previewPrincipal">Dr. A. K. Sharma</div>
+            <div class="text-gray-500">Principal</div>
+          </div>
+        </div>
+
+        <div class="text-xs text-gray-500 text-right">
+          <div id="previewCollegeBottom">Greenfield College • www.example.edu</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <p class="text-sm text-gray-500">Tip: Use the preview to verify alignment. You can edit college info in the form; changes will reflect on preview.</p>
+</div>
+
+  </div>  <!-- libs -->  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>  <script>
+    // Helpers
+    const el = id => document.getElementById(id);
+
+    function pad(num, size=4){ return num.toString().padStart(size,'0'); }
+
+    function genAdmission(){
+      const year = new Date().getFullYear();
+      const rand = Math.floor(Math.random()*9000)+1000;
+      return `AD-${year}-${pad(rand,4)}`;
+    }
+
+    // populate initial admission no
+    el('admissionNo').value = genAdmission();
+
+    // event bindings
+    el('regenAdm').addEventListener('click', ()=>{ el('admissionNo').value = genAdmission(); updatePreview(); });
+
+    el('photoInput').addEventListener('change', (ev)=>{
+      const f = ev.target.files[0];
+      if(!f) return;
+      const url = URL.createObjectURL(f);
+      const img = new Image(); img.onload = ()=>{
+        // place into preview
+        const box = el('previewPhoto');
+        box.innerHTML = '';
+        img.style.width = '100%'; img.style.height='100%'; img.style.objectFit='cover';
+        box.appendChild(img);
+      }
+      img.src = url;
+    });
+
+    // update preview when fields change
+    const fields = ['studentName','admissionNo','dob','classYear','fatherName','address','mobile','collegeName','collegeReg','collegePhone','collegeAddr','principalName','sessionText','collegeLogo','principalSign'];
+    fields.forEach(f => { el(f).addEventListener('input', updatePreview); });
+
+    function updatePreview(){
+      el('previewName').textContent = el('studentName').value || 'Student Name';
+      el('previewAdm').textContent = el('admissionNo').value || '';
+      el('previewDob').textContent = el('dob').value ? (new Date(el('dob').value)).toLocaleDateString() : '';
+      el('previewClass').textContent = el('classYear').value || '';
+      el('previewFname').textContent = el('fatherName').value || '';
+      el('previewMob').textContent = el('mobile').value || '';
+      el('previewAddr').textContent = el('address').value || el('collegeAddr').value;
+
+      el('previewCollegeName').textContent = el('collegeName').value || 'College Name';
+      el('previewReg').textContent = el('collegeReg').value || '';
+      el('previewPhone').textContent = el('collegePhone').value || '';
+      el('previewCollegeAddr').textContent = el('collegeAddr').value || '';
+      el('previewPrincipal').textContent = el('principalName').value || '';
+      el('previewSession').textContent = el('sessionText').value || '';
+      el('previewCollegeBottom').textContent = el('collegeName').value + ' • ' + (location.hostname || 'www.example.edu');
+
+      // logo
+      const logoUrl = el('collegeLogo').value.trim();
+      const logoBox = el('logoBox');
+      if(logoUrl){ logoBox.innerHTML = `<img src="${logoUrl}" style="width:100%;height:100%;object-fit:cover"/>`; }
+      else { /* keep default svg */ logoBox.innerHTML = document.getElementById('defaultLogo').outerHTML; }
+
+      // signature
+      const sigUrl = el('principalSign').value.trim();
+      const signBox = el('signBox');
+      if(sigUrl){ signBox.innerHTML = `<img src="${sigUrl}" style="height:40px;object-fit:contain"/>`; }
+      else { signBox.innerHTML = `<svg width="110" height="40" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg"><path d="M4 60 C50 10, 150 100, 196 40" stroke="#000" fill="none" stroke-width="3" stroke-linecap="round"/></svg>`; }
+    }
+
+    // initial preview
+    updatePreview();
+
+    el('previewBtn').addEventListener('click', ()=>{
+      // ensure admission no and at least name
+      if(!el('studentName').value){ alert('Please enter student name.'); return; }
+      if(!el('admissionNo').value) el('admissionNo').value = genAdmission();
+      updatePreview();
+      // scroll into view
+      el('idCard').scrollIntoView({behavior:'smooth',block:'center'});
+    });
+
+    el('resetBtn').addEventListener('click', ()=>{ document.getElementById('idForm').reset(); el('admissionNo').value = genAdmission(); // set default college fields back
+      el('collegeName').value = 'Greenfield College of Arts & Science'; el('collegeReg').value = 'Reg. No: GFA/2012/001'; el('collegePhone').value='(012) 345-6789'; el('collegeAddr').value='12 Campus Road, Cityname, State - 123456'; el('principalName').value='Dr. A. K. Sharma'; el('sessionText').value='Session 2024-25'; updatePreview();
+    });
+
+    // export PNG
+    el('downloadPNG').addEventListener('click', ()=>{
+      const node = el('idCard');
+      html2canvas(node, { scale: 2 }).then(canvas =>{
+        const link = document.createElement('a');
+        link.download = (el('studentName').value || 'id-card') + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    });
+
+    // export PDF using jsPDF
+    el('downloadPDF').addEventListener('click', async ()=>{
+      const node = el('idCard');
+      const canvas = await html2canvas(node, { scale: 2 });
+      const imgData = canvas.toDataURL('image/png');
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ unit:'px', format:[canvas.width, canvas.height] });
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save((el('studentName').value || 'id-card') + '.pdf');
+    });
+
+  </script></body>
+</html>
