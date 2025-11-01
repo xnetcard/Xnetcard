@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>College ID Card Generator</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: "Inter", sans-serif; }
+  .id-card {
+    width: 340px; height: 226px;  /* 90x60mm */
+    border: 4px solid #dc2626; /* red border */
+    border-radius: 10px;
+    background: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  }
+  .header {
+    background: #047857;
+    color: white;
+    text-align: center;
+    padding: 6px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .header img {
+    position: absolute;
+    left: 10px;
+    top: 4px;
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+  }
+  .watermark {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.08;
+    font-size: 30px;
+    white-space: nowrap;
+    color: #000;
+    text-align: center;
+    pointer-events: none;
+  }
+  .photo-box {
+    width: 80px; height: 95px;
+    border: 2px solid #dc2626;
+    margin-top: 8px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .photo-box img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .sign-box {
+    text-align: center;
+    font-size: 10px;
+    margin-top: 2px;
+  }
+  @media print { .no-print { display: none; } }
+</style>
+</head>
+<body class="bg-gray-100 p-4 flex flex-col items-center">
+
+<!-- Form Section -->
+<div class="bg-white p-6 rounded-xl shadow-md w-full max-w-md no-print">
+  <h1 class="text-2xl font-semibold text-center mb-4">Student ID Card Form</h1>
+  <form id="idForm" class="space-y-3">
+    <input id="schoolName" placeholder="School/College Name" class="w-full border rounded px-3 py-2" required />
+    <input id="schoolAddr" placeholder="School Address" class="w-full border rounded px-3 py-2" required />
+    <input id="schoolPhone" placeholder="School Phone Number" class="w-full border rounded px-3 py-2" required />
+    <input type="file" id="schoolLogo" accept="image/*" class="w-full border rounded px-3 py-2" required />
+    <hr class="my-3" />
+    <input id="studentName" placeholder="Student Full Name" class="w-full border rounded px-3 py-2" required />
+    <input id="admNo" placeholder="Admission Number" class="w-full border rounded px-3 py-2" required />
+    <input id="fatherName" placeholder="Father's Name" class="w-full border rounded px-3 py-2" required />
+    <input type="date" id="dob" class="w-full border rounded px-3 py-2" required />
+    <input id="address" placeholder="Address" class="w-full border rounded px-3 py-2" required />
+    <input id="mobile" placeholder="Mobile Number" class="w-full border rounded px-3 py-2" required />
+    <input type="file" id="photoInput" accept="image/*" class="w-full border rounded px-3 py-2" required />
+    <input id="principal" placeholder="Principal Name" class="w-full border rounded px-3 py-2" required />
+    <button type="button" id="generateBtn" class="w-full bg-green-600 text-white py-2 rounded mt-2">Preview ID Card</button>
+  </form>
+</div>
+
+<!-- Preview Section -->
+<div id="previewSection" class="hidden flex flex-col items-center mt-6">
+  <div class="id-card" id="idCard">
+    <div class="header">
+      <img id="logoPreview" src="" alt="Logo">
+      <div class="text-center">
+        <div class="text-sm font-bold" id="prevSchoolName">School/College Name</div>
+        <div class="text-[10px]" id="prevSchoolAddr">Address, City, State</div>
+        <div class="text-[10px]" id="prevSchoolPhone">📞 00000-00000</div>
+      </div>
+    </div>
+
+    <div class="watermark" id="watermark">SCHOOL NAME</div>
+
+    <div class="flex p-2">
+      <div class="photo-box mr-3" id="prevPhoto">Photo</div>
+      <div class="text-[11px] leading-tight">
+        <b>Name:</b> <span id="prevName"></span><br>
+        <b>Adm. No:</b> <span id="prevAdm"></span><br>
+        <b>DOB:</b> <span id="prevDob"></span><br>
+        <b>Father:</b> <span id="prevFather"></span><br>
+        <b>Mobile:</b> <span id="prevMobile"></span><br>
+        <b>Address:</b> <span id="prevAddress"></span><br>
+        <b>Session:</b> <span id="prevSession"></span>
+      </div>
+    </div>
+
+    <div class="sign-box">
+      <div id="signText" class="italic text-[12px]"></div>
+      <div class="text-[10px] font-semibold">Principal</div>
+    </div>
+  </div>
+
+  <div class="flex gap-3 mt-4 no-print">
+    <button id="downloadPNG" class="bg-blue-600 text-white px-4 py-2 rounded">Download PNG</button>
+    <button id="downloadPDF" class="bg-red-600 text-white px-4 py-2 rounded">Download PDF</button>
+    <button onclick="location.reload()" class="bg-gray-200 px-4 py-2 rounded">Create New</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  const el = id => document.getElementById(id);
+
+  el('generateBtn').onclick = () => {
+    const sName = el('schoolName').value.trim();
+    const sAddr = el('schoolAddr').value.trim();
+    const sPhone = el('schoolPhone').value.trim();
+    const stName = el('studentName').value.trim();
+
+    if (!sName || !sAddr || !stName) return alert("Please fill all details!");
+
+    el('prevSchoolName').textContent = sName;
+    el('prevSchoolAddr').textContent = sAddr;
+    el('prevSchoolPhone').textContent = "📞 " + sPhone;
+    el('prevName').textContent = stName;
+    el('prevAdm').textContent = el('admNo').value;
+    el('prevDob').textContent = new Date(el('dob').value).toLocaleDateString();
+    el('prevFather').textContent = el('fatherName').value;
+    el('prevMobile').textContent = el('mobile').value;
+    el('prevAddress').textContent = el('address').value;
+
+    const y = new Date().getFullYear();
+    el('prevSession').textContent = `${y}-${y+1}`;
+    el('signText').textContent = el('principal').value + " ✍️";
+
+    const logo = el('schoolLogo').files[0];
+    if (logo) {
+      const url = URL.createObjectURL(logo);
+      el('logoPreview').src = url;
+      el('watermark').innerText = sName;
+    }
+
+    const photo = el('photoInput').files[0];
+    if (photo) {
+      const url = URL.createObjectURL(photo);
+      el('prevPhoto').innerHTML = `<img src="${url}" alt="photo">`;
+    }
+
+    document.querySelector('.bg-white').classList.add('hidden');
+    el('previewSection').classList.remove('hidden');
+  };
+
+  // Download buttons
+  el('downloadPNG').onclick = () => {
+    html2canvas(el('idCard'), { scale: 3 }).then(canvas => {
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL("image/png");
+      a.download = "idcard.png";
+      a.click();
+    });
+  };
+
+  el('downloadPDF').onclick = async () => {
+    const canvas = await html2canvas(el('idCard'), { scale: 3 });
+    const img = canvas.toDataURL("image/png");
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ unit: "px", format: [canvas.width, canvas.height] });
+    pdf.addImage(img, "PNG", 0, 0, canvas.width, canvas.height);
+    pdf.save("idcard.pdf");
+  };
+</script>
+
+</body>
+</html>
