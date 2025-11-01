@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ID Card Generator v4.1</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ID Card Generator v4.2</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -24,7 +23,7 @@
       border-radius: 8px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       padding: 8px;
     }
 
@@ -72,7 +71,7 @@
     }
 
     .signature {
-      font-family: 'Brush Script MT', cursive;
+      font-family: "Brush Script MT", cursive;
       font-size: 14px;
       color: #1b5e20;
       text-align: right;
@@ -84,7 +83,8 @@
       margin-top: 10px;
     }
 
-    input, button {
+    input,
+    button {
       margin: 4px;
       padding: 6px;
     }
@@ -97,25 +97,24 @@
   </style>
 </head>
 <body>
-
-  <h2>🎓 College ID Card Generator (v4.1)</h2>
+  <h2>🎓 College ID Card Generator (v4.2)</h2>
 
   <!-- Form Section -->
   <div id="formSection">
-    <input type="text" id="collegeName" placeholder="College Name"><br>
-    <input type="text" id="studentName" placeholder="Student Name"><br>
-    <input type="text" id="fatherName" placeholder="Father's Name"><br>
-    <input type="text" id="dob" placeholder="Date of Birth"><br>
-    <input type="text" id="address" placeholder="Address"><br>
-    <input type="text" id="mobile" placeholder="Mobile Number"><br>
-    <input type="text" id="regNo" placeholder="Registration No"><br>
-    <input type="text" id="principalName" placeholder="Principal Name"><br><br>
+    <input type="text" id="collegeName" placeholder="College Name" /><br />
+    <input type="text" id="studentName" placeholder="Student Name" /><br />
+    <input type="text" id="fatherName" placeholder="Father's Name" /><br />
+    <input type="text" id="dob" placeholder="Date of Birth" /><br />
+    <input type="text" id="address" placeholder="Address" /><br />
+    <input type="text" id="mobile" placeholder="Mobile Number" /><br />
+    <input type="text" id="regNo" placeholder="Registration No" /><br />
+    <input type="text" id="principalName" placeholder="Principal Name" /><br /><br />
 
-    <label>Upload Student Photo:</label><br>
-    <input type="file" id="studentPhoto" accept="image/*"><br><br>
+    <label>Upload Student Photo:</label><br />
+    <input type="file" id="studentPhoto" accept="image/*" /><br /><br />
 
-    <label>Upload College Logo (optional):</label><br>
-    <input type="file" id="collegeLogo" accept="image/*"><br><br>
+    <label>Upload College Logo (optional):</label><br />
+    <input type="file" id="collegeLogo" accept="image/*" /><br /><br />
 
     <button onclick="generatePreview()">Preview Card</button>
   </div>
@@ -125,7 +124,7 @@
     <div class="card" id="idCard">
       <div class="watermark" id="watermark"></div>
       <div class="header">
-        <img id="photoPreview" class="photo" alt="Student Photo">
+        <img id="photoPreview" class="photo" alt="Student Photo" />
         <div class="college-info">
           <h2 id="collegeNamePreview"></h2>
           <div class="info" id="studentNamePreview"></div>
@@ -141,10 +140,13 @@
 
     <div class="buttons">
       <button onclick="downloadCard()">Download PNG</button>
+      <button onclick="downloadPDF()">Download PDF</button>
       <button onclick="location.reload()">Create New</button>
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
     function generatePreview() {
       const name = document.getElementById("studentName").value;
@@ -156,34 +158,37 @@
       const college = document.getElementById("collegeName").value;
       const principal = document.getElementById("principalName").value;
 
-      // Fill preview
       document.getElementById("collegeNamePreview").textContent = college;
       document.getElementById("studentNamePreview").textContent = "Name: " + name;
-      document.getElementById("fatherNamePreview").textContent = "Father: " + father;
+      document.getElementById("fatherNamePreview").textContent =
+        "Father: " + father;
       document.getElementById("dobPreview").textContent = "DOB: " + dob;
-      document.getElementById("addressPreview").textContent = "Address: " + address;
-      document.getElementById("mobilePreview").textContent = "Mobile: " + mobile;
-      document.getElementById("regNoPreview").textContent = "Reg. No: " + regNo;
-      document.getElementById("signaturePreview").textContent = principal ? principal + " (Principal)" : "";
-
-      // Watermark
+      document.getElementById("addressPreview").textContent =
+        "Address: " + address;
+      document.getElementById("mobilePreview").textContent =
+        "Mobile: " + mobile;
+      document.getElementById("regNoPreview").textContent =
+        "Reg. No: " + regNo;
+      document.getElementById("signaturePreview").textContent = principal
+        ? principal + " (Principal)"
+        : "";
       document.getElementById("watermark").textContent = college;
 
       // Student photo
       const photoInput = document.getElementById("studentPhoto");
       if (photoInput.files && photoInput.files[0]) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = (e) => {
           document.getElementById("photoPreview").src = e.target.result;
         };
         reader.readAsDataURL(photoInput.files[0]);
       }
 
-      // Background logo watermark
+      // Logo watermark
       const logoInput = document.getElementById("collegeLogo");
       if (logoInput.files && logoInput.files[0]) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = (e) => {
           const watermark = document.getElementById("watermark");
           watermark.style.backgroundImage = `url('${e.target.result}')`;
           watermark.style.backgroundSize = "contain";
@@ -194,22 +199,34 @@
         reader.readAsDataURL(logoInput.files[0]);
       }
 
-      // Switch sections
       document.getElementById("formSection").style.display = "none";
       document.getElementById("previewSection").style.display = "flex";
     }
 
     function downloadCard() {
-      html2canvas(document.getElementById("idCard")).then(canvas => {
+      html2canvas(document.getElementById("idCard")).then((canvas) => {
         const link = document.createElement("a");
         link.download = "id_card.png";
         link.href = canvas.toDataURL();
         link.click();
       });
     }
-  </script>
 
-  <!-- html2canvas library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    async function downloadPDF() {
+      const card = document.getElementById("idCard");
+      const canvas = await html2canvas(card);
+      const imgData = canvas.toDataURL("image/png");
+
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: [90, 60],
+      });
+
+      pdf.addImage(imgData, "PNG", 0, 0, 90, 60);
+      pdf.save("id_card.pdf");
+    }
+  </script>
 </body>
-</html>
+  </html>
