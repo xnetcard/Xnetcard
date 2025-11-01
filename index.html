@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ID Card Generator v4.0 — Form & Preview</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+
+  <div class="w-full max-w-5xl bg-white rounded-xl shadow p-6">
+    <div id="stepForm">
+      <h1 class="text-2xl font-semibold mb-4">Step 1 — Fill Details</h1>
+      <form id="idForm" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm font-medium">Student Full Name</label>
+          <input id="studentName" placeholder="e.g., Aisha Khan" class="w-full border rounded px-3 py-2" required />
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Date of Birth</label>
+          <input type="date" id="dob" class="w-full border rounded px-3 py-2" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium">Father / Guardian Name</label>
+          <input id="fatherName" placeholder="e.g., Mohammad Khan" class="w-full border rounded px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Class / Course</label>
+          <input id="className" placeholder="e.g., Grade 10" class="w-full border rounded px-3 py-2" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium">Mobile Number</label>
+          <input id="mobile" placeholder="e.g., +91 9XXXXXXXXX" class="w-full border rounded px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Admission Number (auto or edit)</label>
+          <input id="admNo" placeholder="Auto-generated" class="w-full border rounded px-3 py-2" />
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium">Address</label>
+          <textarea id="address" placeholder="Address — street, city, state, PIN" class="w-full border rounded px-3 py-2" rows="2"></textarea>
+        </div>
+
+        <hr class="md:col-span-2">
+
+        <div class="md:col-span-2">
+          <h2 class="font-semibold mb-2">School / College Details (editable)</h2>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium">School Name</label>
+          <input id="schoolName" placeholder="e.g., Sunrise Public School" class="w-full border rounded px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Recognition / Reg. No.</label>
+          <input id="recog" placeholder="e.g., Regd. No: AG-28168" class="w-full border rounded px-3 py-2" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium">Session</label>
+          <input id="session" placeholder="e.g., 2024-25" class="w-full border rounded px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Website</label>
+          <input id="schoolWeb" placeholder="e.g., www.school.edu" class="w-full border rounded px-3 py-2" />
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium">School Address</label>
+          <input id="schoolAddr" placeholder="School address — street, city, state, PIN" class="w-full border rounded px-3 py-2" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium">Phone</label>
+          <input id="schoolPhone" placeholder="e.g., +91 9XXXXXXXXX" class="w-full border rounded px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium">School Logo (optional — also used as watermark)</label>
+          <input type="file" id="logoInput" accept="image/*" class="w-full border rounded px-3 py-2" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium">Principal Name (auto-signature)</label>
+          <input id="principalName" placeholder="Principal full name" class="w-full border rounded px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Upload Signature Image (optional)</label>
+          <input type="file" id="sigInput" accept="image/*" class="w-full border rounded px-3 py-2" />
+        </div>
+
+        <div class="md:col-span-2 flex gap-2 mt-2">
+          <button type="button" id="genAdm" class="bg-green-700 text-white px-4 py-2 rounded">Generate Adm. No.</button>
+          <button type="button" id="toPreview" class="bg-blue-600 text-white px-4 py-2 rounded flex-1">Preview ID Card</button>
+          <button type="button" id="resetBtn" class="bg-gray-200 px-4 py-2 rounded">Reset</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="stepPreview" class="hidden">
+      <div class="flex items-center justify-between mb-4">
+        <h1 class="text-2xl font-semibold">Step 2 — Preview & Download</h1>
+        <div class="flex gap-2">
+          <button id="backBtn" class="bg-gray-200 px-3 py-2 rounded">Back</button>
+          <button id="downloadPNG" class="bg-blue-600 text-white px-3 py-2 rounded">Download PNG</button>
+          <button id="downloadPDF" class="bg-red-600 text-white px-3 py-2 rounded">Download PDF</button>
+          <button id="newBtn" class="bg-gray-200 px-3 py-2 rounded">Create New</button>
+        </div>
+      </div>
+
+      <div class="flex justify-center">
+        <div id="idCard" class="id-card" data-watermark="">
+          <div class="card-header flex items-center gap-3 p-2">
+            <div id="logoArea" class="logo-area w-14 h-14 bg-white rounded flex items-center justify-center text-green-700 font-bold">Faint Logo</div>
+            <div class="flex-1">
+              <div id="previewSchool" class="school-name text-base font-bold text-green-700">School Name</div>
+              <div id="previewRecog" class="text-xs text-gray-600">Recognition / Reg No.</div>
+            </div>
+          </div>
+
+          <div class="separator"></div>
+
+          <div class="content p-3">
+            <div class="flex gap-3">
+              <div id="photoBox" class="photo-box red-border">Photo</div>
+              <div class="flex-1 text-sm details pl-1">
+                <div><b>Name:</b> <span id="previewName">—</span></div>
+                <div><b>Adm. No.:</b> <span id="previewAdm">—</span></div>
+                <div><b>Class:</b> <span id="previewClass">—</span></div>
+                <div><b>F. Name:</b> <span id="previewFname">—</span></div>
+                <div><b>DOB:</b> <span id="previewDob">—</span></div>
+                <div><b>Mob.:</b> <span id="previewMob">—</span></div>
+              </div>
+            </div>
+
+            <div class="mt-2 text-xs"><b>Address:</b> <span id="previewAddr">—</span></div>
+          </div>
+
+          <div class="signature-row p-3 flex items-center justify-between">
+            <div id="sigArea" class="sig-area">
+              <canvas id="sigCanvas" width="260" height="80" style="display:none"></canvas>
+              <div id="sigImgWrap" class="sig-wrap"><img id="sigPreview" src="" alt="" style="max-width:260px; max-height:80px; object-fit:contain; display:none"></div>
+              <div class="text-xs font-semibold text-center">Principal</div>
+            </div>
+            <div class="contact text-xs text-right">
+              <div id="previewPhone">📞 Phone</div>
+              <div id="previewWeb">🌐 Website</div>
+            </div>
+          </div>
+
+          <div class="vertical-text" id="verticalSession">Identity Card</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    const el = id => document.getElementById(id);
+    const pad = n => n.toString().padStart(4,'0');
+    const genAdm = ()=>`AD-${new Date().getFullYear()}-${pad(Math.floor(Math.random()*9999))}`;
+
+    function renderSignature(name, color='#0b5cff') {
+      const canvas = el('sigCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.font = `48px "Great Vibes", cursive`;
+      ctx.fillStyle = color;
+      ctx.textBaseline = 'middle';
+      const metrics = ctx.measureText(name);
+      const textWidth = metrics.width;
+      const x = Math.max(10, (canvas.width - textWidth) / 2);
+      const y = canvas.height/2;
+      ctx.fillText(name, x, y);
+      return canvas.toDataURL('image/png');
+    }
+
+    // initial
+    document.addEventListener('DOMContentLoaded', ()=>{
+      el('admNo').value = genAdm();
+      // default watermark text hint
+      el('idCard').setAttribute('data-watermark', '');
+    });
+
+    // controls
+    el('genAdm').onclick = ()=> { el('admNo').value = genAdm(); };
+    el('resetBtn').onclick = ()=> { location.reload(); };
+    el('newBtn').onclick = ()=> { location.reload(); };
+    el('backBtn').onclick = ()=> { el('stepPreview').classList.add('hidden'); el('stepForm').classList.remove('hidden'); window.scrollTo({top:0,behavior:'smooth'}); };
+
+    // move to preview
+    el('toPreview').onclick = ()=>{
+      // fill preview fields
+      el('previewName').textContent = el('studentName').value.trim() || '—';
+      el('previewAdm').textContent = el('admNo').value || '—';
+      el('previewClass').textContent = el('className').value || '—';
+      el('previewFname').textContent = el('fatherName').value || '—';
+      el('previewDob').textContent = el('dob').value ? new Date(el('dob').value).toLocaleDateString() : '—';
+      el('previewMob').textContent = el('mobile').value || '—';
+      el('previewAddr').textContent = el('address').value || '—';
+
+      el('previewSchool').textContent = el('schoolName').value || 'School Name';
+      el('previewRecog').textContent = el('recog').value || '';
+      el('previewPhone').textContent = '📞 ' + (el('schoolPhone').value || 'Phone');
+      el('previewWeb').textContent = '🌐 ' + (el('schoolWeb').value || 'Website');
+      el('verticalSession').textContent = 'Identity Card ' + (el('session').value ? ('Session ' + el('session').value) : '');
+
+      // photo
+      const file = el('photoInput').files[0];
+      if(file){
+        const url = URL.createObjectURL(file);
+        el('photoBox').innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover">`;
+      } else {
+        el('photoBox').textContent = 'Photo';
+      }
+
+      // logo watermark
+      const logo = el('logoInput').files[0];
+      if(logo){
+        const url = URL.createObjectURL(logo);
+        el('logoArea').innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:contain">`;
+        el('idCard').style.backgroundImage = `url(${url})`;
+        el('idCard').style.backgroundRepeat = 'no-repeat';
+        el('idCard').style.backgroundPosition = 'center';
+        el('idCard').style.backgroundSize = '60%';
+        el('idCard').setAttribute('data-watermark', '');
+      } else {
+        el('logoArea').innerHTML = 'Faint Logo';
+        el('idCard').style.backgroundImage = 'none';
+        el('idCard').setAttribute('data-watermark', el('schoolName').value || '');
+      }
+
+      // signature
+      const sigFile = el('sigInput').files[0];
+      if(sigFile){
+        const sUrl = URL.createObjectURL(sigFile);
+        const sigImg = el('sigPreview');
+        sigImg.src = sUrl; sigImg.style.display = 'block';
+      } else {
+        const name = el('principalName').value.trim() || 'Principal';
+        const dataUrl = renderSignature(name);
+        const sigImg = el('sigPreview');
+        sigImg.src = dataUrl; sigImg.style.display = 'block';
+      }
+
+      // show preview
+      el('stepForm').classList.add('hidden');
+      el('stepPreview').classList.remove('hidden');
+      window.scrollTo({top:0,behavior:'smooth'});
+    };
+
+    // exports
+    el('downloadPNG').onclick = ()=> {
+      html2canvas(el('idCard'),{scale:3, backgroundColor: null}).then(c=>{
+        const a=document.createElement('a');
+        a.href=c.toDataURL('image/png');
+        a.download='idcard.png';
+        a.click();
+      });
+    };
+    el('downloadPDF').onclick = async ()=> {
+      const c = await html2canvas(el('idCard'),{scale:3, backgroundColor: null});
+      const i = c.toDataURL('image/png');
+      const { jsPDF } = window.jspdf;
+      const p = new jsPDF({unit:'px', format:[c.width, c.height]});
+      p.addImage(i, 'PNG', 0, 0, c.width, c.height);
+      p.save('idcard.pdf');
+    };
+  </script>
+</body>
+</html>

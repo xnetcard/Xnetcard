@@ -1,0 +1,68 @@
+/* v4.0 — Official college-style ID, 90x60 mm */
+:root { --card-width-mm: 90mm; --card-height-mm: 60mm; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+body { font-family: 'Inter', sans-serif; }
+
+/* container styling */
+.id-card {
+  width: var(--card-width-mm);
+  height: var(--card-height-mm);
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdfa 100%);
+  padding: 8px;
+  box-sizing: border-box;
+  color: #0f172a;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* watermark text */
+.id-card::before {
+  content: attr(data-watermark);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-18deg);
+  font-size: 22px;
+  font-weight: 800;
+  color: rgba(0,0,0,0.04);
+  pointer-events: none;
+  white-space: nowrap;
+  letter-spacing: 2px;
+}
+
+/* header */
+.card-header { display:flex; align-items:center; gap:10px; padding:4px; }
+.logo-area { width:56px; height:56px; border-radius:6px; overflow:hidden; background:#fff; display:flex; align-items:center; justify-content:center; color:#047857; font-weight:700; }
+.school-name { font-size:13px; line-height:1; }
+.separator { height:4px; background:#047857; margin:6px 8px; border-radius:2px; }
+
+/* main content */
+.content { font-size:11px; color:#0f172a; padding:6px; }
+.photo-box { width:96px; height:120px; background:#f3f4f6; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:600; color:#6b7280; overflow:hidden; }
+.red-border { border:2px solid #ef4444; padding:2px; border-radius:8px; }
+
+.details b { font-weight:700; font-size:11px; }
+.details div { margin-bottom:4px; }
+
+.signature-row { border-top:1px solid rgba(0,0,0,0.06); margin-top:6px; padding-top:6px; }
+
+.sig-area img { display:block; }
+
+.vertical-text {
+  position:absolute;
+  right:-20px;
+  top:12px;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  font-size:10px;
+  color:#047857;
+  font-weight:600;
+}
+
+/* responsive tweaks */
+@media (max-width: 640px) {
+  .id-card { transform: scale(0.9); transform-origin: top center; }
+}
