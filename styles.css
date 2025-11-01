@@ -1,0 +1,62 @@
+/* styles.css - 85x54 mm card */
+:root { --card-width-mm: 85mm; --card-height-mm: 54mm; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+body { font-family: 'Inter', sans-serif; }
+
+.id-card {
+  width: var(--card-width-mm);
+  height: var(--card-height-mm);
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  background: linear-gradient(180deg, #ffffff 0%, #fafafc 100%);
+  padding: 6px;
+  box-sizing: border-box;
+  color: #0f172a;
+  position: relative;
+  overflow: hidden;
+}
+
+/* watermark when text provided */
+.id-card::before {
+  content: attr(data-watermark);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-22deg);
+  font-size: 20px;
+  font-weight: 800;
+  color: rgba(0,0,0,0.04);
+  pointer-events: none;
+  white-space: nowrap;
+  letter-spacing: 2px;
+}
+
+/* header */
+.card-header { background: transparent; display:flex; align-items:center; }
+.logo-area { width:48px; height:48px; border-radius:6px; overflow:hidden; background:#fff; display:flex; align-items:center; justify-content:center; }
+.school-name { font-size:12px; line-height:1; }
+.separator { height:3px; background:linear-gradient(90deg,#ef4444,#ef4444); margin:4px 6px; border-radius:2px; }
+
+.content { font-size:10px; color:#0f172a; }
+.photo-box { width:88px; height:108px; background:#f3f4f6; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:600; color:#6b7280; overflow:hidden; }
+.red-border { border:2px solid #ef4444; padding:2px; border-radius:8px; }
+
+.details b { font-weight:700; }
+
+.signature-row { border-top:1px solid rgba(0,0,0,0.06); margin-top:6px; }
+
+.sig-area img { display:block; }
+
+.vertical-text {
+  position:absolute;
+  right:-18px;
+  top:10px;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  font-size:9px;
+  color:#a855f7;
+  font-weight:600;
+}
+
+/* utility */
+.font-inter { font-family: 'Inter', sans-serif; }
