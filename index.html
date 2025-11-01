@@ -3,230 +3,199 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ID Card Generator v4.2</title>
+  <title>Official ID Card Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .card {
-      width: 90mm;
-      height: 60mm;
-      background: white;
-      border: 2px solid #1b5e20;
+    body { font-family: 'Inter', sans-serif; background:#f3f4f6; }
+    .id-card {
+      width: 90mm; height: 60mm;
+      background: #fff;
+      border: 3px solid #b91c1c;
       border-radius: 8px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      padding: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
-
-    .watermark {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      opacity: 0.08;
-      font-size: 18mm;
-      color: #1b5e20;
-      text-align: center;
-      white-space: nowrap;
-      z-index: 0;
-    }
-
-    .photo {
-      width: 25mm;
-      height: 30mm;
-      border: 1px solid #444;
-      object-fit: cover;
-      margin-right: 10px;
-    }
-
     .header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 6px;
+      background: #065f46;
+      color: white;
+      text-align: center;
+      padding: 4px;
+      font-weight: bold;
+      font-size: 13px;
     }
-
-    .college-info {
-      text-align: left;
-      flex: 1;
-    }
-
-    .college-info h2 {
-      font-size: 14px;
-      margin: 0;
-      color: #1b5e20;
-    }
-
-    .info {
+    .sub-header {
+      background: #047857;
+      color: #e0f2f1;
       font-size: 10px;
-      margin-bottom: 2px;
+      text-align: center;
+      padding: 2px;
     }
-
+    .photo {
+      width: 80px; height: 95px;
+      border: 2px solid #b91c1c;
+      border-radius: 6px;
+      object-fit: cover;
+      background: #f1f1f1;
+    }
+    .details {
+      font-size: 10px;
+      color: #111827;
+      line-height: 1.3;
+    }
     .signature {
       font-family: "Brush Script MT", cursive;
+      color: #047857;
       font-size: 14px;
-      color: #1b5e20;
       text-align: right;
-      margin-top: 8px;
-      margin-right: 4px;
+      margin-right: 8px;
     }
-
-    .buttons {
-      margin-top: 10px;
-    }
-
-    input,
-    button {
-      margin: 4px;
-      padding: 6px;
-    }
-
-    #previewSection {
-      display: none;
-      flex-direction: column;
-      align-items: center;
+    .watermark {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.07;
+      font-size: 22px;
+      color: #065f46;
+      text-align: center;
+      z-index: 0;
+      white-space: nowrap;
+      pointer-events: none;
     }
   </style>
 </head>
-<body>
-  <h2>🎓 College ID Card Generator (v4.2)</h2>
+<body class="flex flex-col items-center p-6">
+  <h2 class="text-2xl font-semibold mb-4 text-green-800">🎓 College / School ID Card Generator</h2>
 
-  <!-- Form Section -->
-  <div id="formSection">
-    <input type="text" id="collegeName" placeholder="College Name" /><br />
-    <input type="text" id="studentName" placeholder="Student Name" /><br />
-    <input type="text" id="fatherName" placeholder="Father's Name" /><br />
-    <input type="text" id="dob" placeholder="Date of Birth" /><br />
-    <input type="text" id="address" placeholder="Address" /><br />
-    <input type="text" id="mobile" placeholder="Mobile Number" /><br />
-    <input type="text" id="regNo" placeholder="Registration No" /><br />
-    <input type="text" id="principalName" placeholder="Principal Name" /><br /><br />
-
-    <label>Upload Student Photo:</label><br />
-    <input type="file" id="studentPhoto" accept="image/*" /><br /><br />
-
-    <label>Upload College Logo (optional):</label><br />
-    <input type="file" id="collegeLogo" accept="image/*" /><br /><br />
-
-    <button onclick="generatePreview()">Preview Card</button>
+  <!-- Form -->
+  <div id="formSection" class="bg-white p-4 rounded-xl shadow-md w-full max-w-md space-y-3">
+    <input id="collegeName" placeholder="Enter College Name" class="w-full border rounded px-3 py-2" />
+    <input id="collegeAddr" placeholder="Enter College Address" class="w-full border rounded px-3 py-2" />
+    <input id="studentName" placeholder="Student Name" class="w-full border rounded px-3 py-2" />
+    <input id="admNo" placeholder="Admission No." class="w-full border rounded px-3 py-2" />
+    <input id="fatherName" placeholder="Father's Name" class="w-full border rounded px-3 py-2" />
+    <input type="date" id="dob" class="w-full border rounded px-3 py-2" />
+    <input id="address" placeholder="Address" class="w-full border rounded px-3 py-2" />
+    <input id="mobile" placeholder="Mobile No." class="w-full border rounded px-3 py-2" />
+    <input id="principalName" placeholder="Principal Name" class="w-full border rounded px-3 py-2" />
+    <label class="block text-sm font-semibold text-gray-700">Upload Student Photo:</label>
+    <input type="file" id="photoInput" accept="image/*" class="w-full border rounded px-3 py-2" />
+    <label class="block text-sm font-semibold text-gray-700">Upload College Logo (for watermark):</label>
+    <input type="file" id="logoInput" accept="image/*" class="w-full border rounded px-3 py-2" />
+    <button onclick="generateCard()" class="w-full bg-green-700 text-white py-2 rounded">Preview ID Card</button>
   </div>
 
-  <!-- Preview Section -->
-  <div id="previewSection">
-    <div class="card" id="idCard">
-      <div class="watermark" id="watermark"></div>
-      <div class="header">
-        <img id="photoPreview" class="photo" alt="Student Photo" />
-        <div class="college-info">
-          <h2 id="collegeNamePreview"></h2>
-          <div class="info" id="studentNamePreview"></div>
-          <div class="info" id="fatherNamePreview"></div>
-          <div class="info" id="dobPreview"></div>
-          <div class="info" id="addressPreview"></div>
-          <div class="info" id="mobilePreview"></div>
-          <div class="info" id="regNoPreview"></div>
+  <!-- Preview -->
+  <div id="previewSection" class="hidden flex flex-col items-center mt-6 space-y-3">
+    <div class="id-card relative" id="idCard">
+      <div id="watermark" class="watermark"></div>
+      <div class="header" id="collegeNamePreview">Your College Name</div>
+      <div class="sub-header" id="sessionYear">Session 2025–26</div>
+
+      <div class="flex px-3 py-2 items-start gap-3 relative z-10">
+        <img id="photoPreview" class="photo" alt="Photo" />
+        <div class="details">
+          <div><b>Name:</b> <span id="namePreview">John Doe</span></div>
+          <div><b>Adm. No.:</b> <span id="admPreview">AD-00123</span></div>
+          <div><b>F. Name:</b> <span id="fnamePreview">Mr. Smith</span></div>
+          <div><b>DOB:</b> <span id="dobPreview">01/01/2005</span></div>
+          <div><b>Address:</b> <span id="addrPreview">City, State</span></div>
+          <div><b>Mobile:</b> <span id="mobPreview">9876543210</span></div>
         </div>
       </div>
-      <div class="signature" id="signaturePreview"></div>
+
+      <div class="px-3 text-[9px] text-gray-700 z-10 relative" id="collegeAddrPreview">
+        123, Campus Road, City, State - 123456
+      </div>
+
+      <div class="signature z-10 relative" id="signPreview">A. Sharma</div>
+      <div class="text-[9px] text-right pr-2 z-10 relative">Principal</div>
     </div>
 
-    <div class="buttons">
-      <button onclick="downloadCard()">Download PNG</button>
-      <button onclick="downloadPDF()">Download PDF</button>
-      <button onclick="location.reload()">Create New</button>
+    <div class="flex gap-3">
+      <button onclick="downloadPNG()" class="bg-blue-600 text-white px-4 py-2 rounded">Download PNG</button>
+      <button onclick="downloadPDF()" class="bg-red-600 text-white px-4 py-2 rounded">Download PDF</button>
+      <button onclick="location.reload()" class="bg-gray-200 px-4 py-2 rounded">Create New</button>
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
-    function generatePreview() {
-      const name = document.getElementById("studentName").value;
-      const father = document.getElementById("fatherName").value;
-      const dob = document.getElementById("dob").value;
-      const address = document.getElementById("address").value;
-      const mobile = document.getElementById("mobile").value;
-      const regNo = document.getElementById("regNo").value;
-      const college = document.getElementById("collegeName").value;
-      const principal = document.getElementById("principalName").value;
+    const el = (id) => document.getElementById(id);
 
-      document.getElementById("collegeNamePreview").textContent = college;
-      document.getElementById("studentNamePreview").textContent = "Name: " + name;
-      document.getElementById("fatherNamePreview").textContent =
-        "Father: " + father;
-      document.getElementById("dobPreview").textContent = "DOB: " + dob;
-      document.getElementById("addressPreview").textContent =
-        "Address: " + address;
-      document.getElementById("mobilePreview").textContent =
-        "Mobile: " + mobile;
-      document.getElementById("regNoPreview").textContent =
-        "Reg. No: " + regNo;
-      document.getElementById("signaturePreview").textContent = principal
-        ? principal + " (Principal)"
-        : "";
-      document.getElementById("watermark").textContent = college;
+    function generateCard() {
+      const college = el("collegeName").value || "Greenfield College";
+      const addr = el("collegeAddr").value || "123 Campus Road, City";
+      const name = el("studentName").value || "John Doe";
+      const adm = el("admNo").value || "AD-2025-001";
+      const fname = el("fatherName").value || "Mr. Sharma";
+      const dob = el("dob").value ? new Date(el("dob").value).toLocaleDateString() : "01/01/2005";
+      const address = el("address").value || "Sample Address";
+      const mob = el("mobile").value || "9876543210";
+      const principal = el("principalName").value || "A. Sharma";
 
-      // Student photo
-      const photoInput = document.getElementById("studentPhoto");
-      if (photoInput.files && photoInput.files[0]) {
+      const year = new Date().getFullYear();
+      el("sessionYear").textContent = `Session ${year}-${(year + 1).toString().slice(-2)}`;
+      el("collegeNamePreview").textContent = college;
+      el("collegeAddrPreview").textContent = addr;
+      el("namePreview").textContent = name;
+      el("admPreview").textContent = adm;
+      el("fnamePreview").textContent = fname;
+      el("dobPreview").textContent = dob;
+      el("addrPreview").textContent = address;
+      el("mobPreview").textContent = mob;
+      el("signPreview").textContent = principal;
+
+      // Photo
+      const photo = el("photoInput").files[0];
+      if (photo) {
         const reader = new FileReader();
-        reader.onload = (e) => {
-          document.getElementById("photoPreview").src = e.target.result;
-        };
-        reader.readAsDataURL(photoInput.files[0]);
+        reader.onload = (e) => (el("photoPreview").src = e.target.result);
+        reader.readAsDataURL(photo);
+      } else {
+        el("photoPreview").src = "";
       }
 
       // Logo watermark
-      const logoInput = document.getElementById("collegeLogo");
-      if (logoInput.files && logoInput.files[0]) {
+      const logo = el("logoInput").files[0];
+      const wm = el("watermark");
+      if (logo) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          const watermark = document.getElementById("watermark");
-          watermark.style.backgroundImage = `url('${e.target.result}')`;
-          watermark.style.backgroundSize = "contain";
-          watermark.style.backgroundRepeat = "no-repeat";
-          watermark.style.backgroundPosition = "center";
-          watermark.textContent = "";
+          wm.style.backgroundImage = `url('${e.target.result}')`;
+          wm.style.backgroundSize = "contain";
+          wm.style.backgroundRepeat = "no-repeat";
+          wm.style.backgroundPosition = "center";
+          wm.textContent = "";
         };
-        reader.readAsDataURL(logoInput.files[0]);
+        reader.readAsDataURL(logo);
+      } else {
+        wm.textContent = college;
+        wm.style.backgroundImage = "";
       }
 
-      document.getElementById("formSection").style.display = "none";
-      document.getElementById("previewSection").style.display = "flex";
+      el("formSection").classList.add("hidden");
+      el("previewSection").classList.remove("hidden");
     }
 
-    function downloadCard() {
-      html2canvas(document.getElementById("idCard")).then((canvas) => {
-        const link = document.createElement("a");
-        link.download = "id_card.png";
-        link.href = canvas.toDataURL();
-        link.click();
+    function downloadPNG() {
+      html2canvas(el("idCard"), { scale: 3 }).then((canvas) => {
+        const a = document.createElement("a");
+        a.href = canvas.toDataURL();
+        a.download = "id_card.png";
+        a.click();
       });
     }
 
     async function downloadPDF() {
-      const card = document.getElementById("idCard");
-      const canvas = await html2canvas(card);
-      const imgData = canvas.toDataURL("image/png");
-
       const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({
-        orientation: "landscape",
-        unit: "mm",
-        format: [90, 60],
-      });
-
+      const canvas = await html2canvas(el("idCard"), { scale: 3 });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: [90, 60] });
       pdf.addImage(imgData, "PNG", 0, 0, 90, 60);
       pdf.save("id_card.pdf");
     }
   </script>
 </body>
-  </html>
+</html>
